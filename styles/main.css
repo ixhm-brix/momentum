@@ -553,8 +553,8 @@ h3 {
 /* ---------- Budget card + stamp ---------- */
 
 .dash-duo { display: grid; gap: 1.2rem; }
-/* These two cards appear right away (no delay). */
-.panel > .dash-duo { animation-delay: 0s; }
+/* Budget + chart cards: no entrance animation — show instantly on load. */
+.panel > .dash-duo { animation: none; }
 
 .budget-card { position: relative; }
 .budget-card.is-over { border-top-color: #8e2f1c; }
@@ -656,8 +656,6 @@ h3 {
     repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(244, 239, 226, 0.18) 5px, rgba(244, 239, 226, 0.18) 6px),
     #1e3a26;
   border-radius: 3px 3px 0 0;
-  transform-origin: bottom;
-  animation: grow 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   transition: filter 0.2s;
 }
 .chart-col:hover .chart-bar { filter: brightness(1.18); }
@@ -665,8 +663,6 @@ h3 {
 
 /* Today's bar is darker. */
 .chart-col:last-child .chart-bar:not(.is-empty) { background-color: #1e3a26; }
-
-@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 
 /* week's average line */
 .chart-avg {
@@ -1255,7 +1251,6 @@ select { cursor: pointer; }
   main::before { left: 2.7rem; }
 
   .dash-duo { grid-template-columns: 5fr 7fr; align-items: stretch; }
-  .dash-duo .chart-card { animation-delay: 0.08s; }
 
   .chart-plot { --unit: 1.8px; }
   .chart-val { font-size: 0.7rem; }
