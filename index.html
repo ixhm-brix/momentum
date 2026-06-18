@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Momentum  Student Finance Tracker</title>
+  <meta name="description" content="Momentum — a student's ledger of small spendings. Log expenses, search with regex, and stay within budget.">
+  <meta name="theme-color" content="#F4EFE2">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 23c0-9 5-16 14-18-1 9-5 15-11 17' fill='%232C5237'/%3E%3Ccircle cx='9' cy='24' r='3.4' fill='%2326241C'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts load asynchronously (media swap) so a slow/blocked font CDN can
+       never block the page from painting — fallback fonts show instantly,
+       custom faces swap in when ready. -->
+  <link rel="stylesheet" media="print" onload="this.media='all'"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@900&family=Inter:wght@400;600&display=swap">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@900&family=Inter:wght@400;600&display=swap">
+  </noscript>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Fixed umber strip across the top — the nav tray hangs flush from it. -->
+  <div class="binding" aria-hidden="true"></div>
+
+  <!-- The ink tray of index tabs: a bottom dock on phones,
+       hanging from the top edge on larger screens. -->
+  <nav class="site-nav">
+    <ul class="tabs">
+      <li>
+        <a href="#dashboard" data-route="dashboard">
+          <svg class="tab-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 19v-6.5"/><path d="M12 19V5.5"/><path d="M18 19v-9"/><path d="M3.5 21.5h17"/>
+          </svg>
+          <span class="tab-label">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#transactions" data-route="transactions">
+          <svg class="tab-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.5 2.5h11v17.5l-1.85-1.5-1.85 1.5-1.8-1.5-1.8 1.5-1.85-1.5-1.85 1.5z"/>
+            <path d="M9.5 8h5"/><path d="M9.5 11.5h3.2"/>
+          </svg>
+          <span class="tab-label">Transactions</span>
+        </a>
+      </li>
+      <li>
+        <a href="#add" data-route="add">
+          <svg class="tab-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="8.5"/>
+            <path d="M12 8.2v7.6"/><path d="M8.2 12h7.6"/>
+          </svg>
+          <span class="tab-label">Add entry</span>
+        </a>
+      </li>
+      <li>
+        <a href="#settings" data-route="settings">
+          <svg class="tab-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3.5 7h6"/><circle cx="11.7" cy="7" r="2.1"/><path d="M14 7h6.5"/>
+            <path d="M3.5 12h1.4"/><circle cx="7.1" cy="12" r="2.1"/><path d="M9.4 12h11.1"/>
+            <path d="M3.5 17h10"/><circle cx="15.7" cy="17" r="2.1"/><path d="M18 17h2.5"/>
+          </svg>
+          <span class="tab-label">Settings</span>
+        </a>
+      </li>
+      <li>
+        <a href="#about" data-route="about">
+          <svg class="tab-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="8.5"/>
+            <path d="M12 11.2v5"/>
+            <circle cx="12" cy="7.9" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+          <span class="tab-label">About</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <header class="masthead">
+    <!-- Logo / brand block removed for now — to be reintroduced later. -->
+    <h1 class="visually-hidden">Momentum — Student Finance Tracker</h1>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ============ DASHBOARD ============ -->
+    <section id="dashboard" class="panel" aria-labelledby="dashboard-title">
+      <p class="folio">№ 01 · the balance page</p>
+      <h2 id="dashboard-title">Dashboard</h2>
+
+      <!-- Denomination hero — engraved banknote artwork as the card itself. -->
+      <section class="note" id="hero-note" aria-label="Total recorded expenditure">
+        <div class="note__head">
+          <p class="microprint">Total Recorded Expenditure</p>
+          <p class="microprint note__period" id="hero-period">All entries · base currency</p>
+        </div>
+
+        <div class="denomination">
+          <span class="denomination__cur" id="hero-cur">RWF</span>
+          <span class="denomination__figure" id="stat-total">0</span>
+        </div>
+
+        <p class="microprint denomination__words" id="hero-words">Zero · no expenditure recorded</p>
+
+        <div class="note__foot">
+          <span class="serial" id="hero-serial">SER · RL—0000—A</span>
+          <span class="microprint">This Account · Personal Reserve</span>
+        </div>
+      </section>
+      <p class="note-exchange" id="stat-conversions" aria-label="Converted totals"></p>
+
+      <div class="stat-grid">
+        <article class="stat-card" data-mark="a.">
+          <h3>Entries kept</h3>
+          <p class="stat-figure" id="stat-count">0</p>
+          <p class="stat-detail">lines in the ledger</p>
+        </article>
+        <article class="stat-card" data-mark="b.">
+          <h3>Top category</h3>
+          <p class="stat-figure" id="stat-top">—</p>
+          <p class="stat-detail" id="stat-top-detail"></p>
+        </article>
+      </div>
+
+      <div class="dash-duo">
+        <article class="budget-card cropped" id="budget-card" aria-labelledby="budget-title">
+          <div class="budget-head">
+            <h3 id="budget-title">Monthly budget</h3>
+            <p class="stamp" id="over-stamp" hidden aria-hidden="true">Over budget</p>
+          </div>
+          <p class="budget-figure" id="cap-figure">—</p>
+          <div class="meter" role="presentation">
+            <div class="meter-fill" id="cap-meter-fill"></div>
+          </div>
+          <p class="budget-note" id="cap-note"></p>
+          <!-- Two dedicated live regions: polite while under the cap,
+               assertive once it is exceeded. -->
+          <p class="visually-hidden" id="cap-live-polite" aria-live="polite"></p>
+          <p class="visually-hidden" id="cap-live-assertive" aria-live="assertive" role="alert"></p>
+        </article>
+
+        <article class="chart-card cropped" aria-labelledby="chart-title">
+          <h3 id="chart-title">The last seven days</h3>
+          <div class="chart" id="chart" role="img" aria-label="Spending chart for the last 7 days"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ TRANSACTIONS ============ -->
+    <section id="transactions" class="panel" hidden aria-labelledby="transactions-title">
+      <p class="folio">№ 02 · every line accounted for</p>
+      <h2 id="transactions-title">Transactions</h2>
+
+      <div class="ledger-controls">
+        <div class="control control-grow">
+          <label for="search">Search the ledger <span class="hint-inline">(regular expressions welcome)</span></label>
+          <input type="text" id="search" autocomplete="off" spellcheck="false"
+                 placeholder="e.g. (coffee|tea) or \.\d{2}\b" aria-describedby="search-state">
+          <p class="pattern-state" id="search-state" data-state="idle" aria-live="polite">— type to search</p>
+        </div>
+        <div class="control control-check">
+          <input type="checkbox" id="search-ci" checked>
+          <label for="search-ci">Case-insensitive</label>
+        </div>
+        <div class="control">
+          <label for="sort">Sort by</label>
+          <select id="sort">
+            <option value="created-desc" selected>Date added — newest first</option>
+            <option value="created-asc">Date added — oldest first</option>
+            <option value="description-asc">Description — A to Z</option>
+            <option value="description-desc">Description — Z to A</option>
+            <option value="amount-desc">Amount — highest first</option>
+            <option value="amount-asc">Amount — lowest first</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="result-count" id="result-count" aria-live="polite"></p>
+
+      <table class="ledger-table" id="txn-table">
+        <caption class="visually-hidden">Your logged transactions</caption>
+        <thead>
+          <tr>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Date</th>
+            <th scope="col" class="num">Amount</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="txn-tbody"></tbody>
+      </table>
+      <p class="empty-note" id="txn-empty" hidden>
+        Nothing here yet. <a href="#add">Log your first expense</a> — the ledger is patient.
+      </p>
+    </section>
+
+    <!-- ============ ADD / EDIT ============ -->
+    <section id="add" class="panel" hidden aria-labelledby="add-title">
+      <p class="folio">№ 03 · in your own hand</p>
+      <h2 id="add-title"><span id="add-title-mode">Add an entry</span></h2>
+
+      <form id="txn-form" class="entry-form cropped" novalidate>
+        <div class="field field-wide">
+          <label for="f-description">Description</label>
+          <input type="text" id="f-description" name="description" autocomplete="off"
+                 aria-describedby="err-description hint-description">
+          <p class="hint" id="hint-description">No edge or double spaces; repeated words like “the the” are caught.</p>
+          <p class="field-error" id="err-description" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-amount">Amount</label>
+          <input type="text" id="f-amount" name="amount" inputmode="decimal" autocomplete="off"
+                 placeholder="12.50" aria-describedby="err-amount hint-amount">
+          <p class="hint" id="hint-amount">In your base currency. Up to 2 decimals.</p>
+          <p class="field-error" id="err-amount" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-category">Category</label>
+          <select id="f-category" name="category" aria-describedby="err-category"></select>
+          <p class="field-error" id="err-category" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-date">Date</label>
+          <input type="date" id="f-date" name="date" aria-describedby="err-date hint-date">
+          <p class="hint" id="hint-date">YYYY-MM-DD</p>
+          <p class="field-error" id="err-date" role="alert" hidden></p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save entry</button>
+          <button type="button" class="btn btn-ghost" id="cancel-edit" hidden>Cancel edit</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section id="settings" class="panel" hidden aria-labelledby="settings-title">
+      <p class="folio">№ 04 · the bookkeeper’s desk</p>
+      <h2 id="settings-title">Settings</h2>
+
+      <div class="settings-grid">
+        <form class="settings-card cropped" id="cap-form" aria-labelledby="cap-title">
+          <h3 id="cap-title">Spending cap</h3>
+          <div class="field">
+            <label for="set-cap">Monthly cap (base currency)</label>
+            <input type="number" id="set-cap" min="0" step="0.01" inputmode="decimal">
+            <p class="hint">Set to 0 to remove the cap.</p>
+          </div>
+          <button type="submit" class="btn btn-primary">Save cap</button>
+        </form>
+
+        <form class="settings-card cropped" id="cur-form" aria-labelledby="cur-title">
+          <h3 id="cur-title">Currencies</h3>
+          <div class="cur-row">
+            <div class="field">
+              <label for="base-code">Base code</label>
+              <input type="text" id="base-code" maxlength="3" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="base-symbol">Symbol</label>
+              <input type="text" id="base-symbol" maxlength="4" autocomplete="off">
+            </div>
+          </div>
+          <div class="cur-row">
+            <div class="field">
+              <label for="alt1-code">Currency 2</label>
+              <input type="text" id="alt1-code" maxlength="3" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="alt1-rate">Rate (1 base =)</label>
+              <input type="number" id="alt1-rate" min="0" step="any" inputmode="decimal">
+            </div>
+          </div>
+          <div class="cur-row">
+            <div class="field">
+              <label for="alt2-code">Currency 3</label>
+              <input type="text" id="alt2-code" maxlength="3" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="alt2-rate">Rate (1 base =)</label>
+              <input type="number" id="alt2-rate" min="0" step="any" inputmode="decimal">
+            </div>
+          </div>
+          <p class="hint">Rates are set by hand — no API calls, like a true ledger.</p>
+          <button type="submit" class="btn btn-primary">Save currencies</button>
+        </form>
+
+        <form class="settings-card cropped" id="cat-form" aria-labelledby="cat-title">
+          <h3 id="cat-title">Categories</h3>
+          <ul class="cat-list" id="cat-list"></ul>
+          <div class="field">
+            <label for="new-category">New category</label>
+            <input type="text" id="new-category" autocomplete="off" aria-describedby="err-new-category">
+            <p class="field-error" id="err-new-category" role="alert" hidden></p>
+          </div>
+          <button type="submit" class="btn btn-primary">Add category</button>
+        </form>
+
+        <div class="settings-card cropped" aria-labelledby="data-title">
+          <h3 id="data-title">Your data</h3>
+          <p class="hint">Everything auto-saves to this browser. Export a copy, or import a previous export.</p>
+          <div class="data-actions">
+            <button type="button" class="btn btn-primary" id="export-btn">Export JSON</button>
+            <label class="btn btn-ghost file-btn" for="import-file">Import JSON
+              <input type="file" id="import-file" accept=".json,application/json">
+            </label>
+            <button type="button" class="btn btn-ghost" id="seed-btn">Restore sample data</button>
+            <button type="button" class="btn btn-ghost btn-danger" id="reset-btn">Reset to defaults</button>
+          </div>
+          <p class="hint">Reset clears everything saved in this browser and reloads with fresh defaults (RWF currency + sample data).</p>
+          <p class="import-status" id="import-status" role="alert"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="panel" hidden aria-labelledby="about-title">
+      <p class="folio">№ 05 · the keeper of this book</p>
+      <h2 id="about-title">About</h2>
+
+      <div class="about-spread">
+        <article class="about-letter cropped">
+          <p class="about-lede">
+            This ledger is kept by <strong>F.&nbsp;Ishimwe</strong>, a student who believes that
+            small spendings deserve careful handwriting.
+          </p>
+          <p>
+            <strong>Momentum</strong> — because small spendings, faithfully recorded, gather
+            speed — is a student finance tracker. Log what you spend, search it with regular expressions,
+            watch the week's trend, and let a firm red stamp tell you when the budget is gone.
+            Built with vanilla HTML, CSS and JavaScript. No frameworks; nothing between
+            you and the page.
+          </p>
+          <p class="signature">— F.&nbsp;Ishimwe</p>
+        </article>
+
+        <aside class="about-side">
+          <div class="about-note">
+            <h3 class="visually-hidden">Contact and links</h3>
+            <dl class="about-meta">
+              <div>
+                <dt>Email</dt>
+                <dd><a href="mailto:f.ishimwe1@alustudent.com">f.ishimwe1@alustudent.com</a></dd>
+              </div>
+              <div>
+                <dt>GitHub</dt>
+                <dd><a href="https://github.com/YOUR-USERNAME/momentum" rel="noopener">github.com/YOUR-USERNAME/momentum</a></dd>
+              </div>
+              <div>
+                <dt>Tests</dt>
+                <dd><a href="tests.html">Run the test page</a></dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Decorative seal -->
+          <svg class="about-seal" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
+            <defs>
+              <path id="seal-arc" d="M80 80m-56 0a56 56 0 1 1 112 0a56 56 0 1 1 -112 0"/>
+            </defs>
+            <circle cx="80" cy="80" r="73" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="80" cy="80" r="67" fill="none" stroke="currentColor" stroke-width="1"/>
+            <circle cx="80" cy="80" r="40" fill="none" stroke="currentColor" stroke-width="1"/>
+            <text font-size="11" letter-spacing="1.6" font-family="'IBM Plex Mono', monospace" fill="currentColor">
+              <textPath href="#seal-arc">MOMENTUM · A STUDENT’S LEDGER · EST. 2026 ·</textPath>
+            </text>
+            <g fill="currentColor" transform="translate(56,55) scale(0.78)">
+              <path d="M18 46C18 26 30 12 52 8c-2 20-12 32-26 36"/>
+              <circle cx="17" cy="48" r="6.5"/>
+            </g>
+          </svg>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <p class="toast" id="app-status" role="status" aria-live="polite"></p>
+
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>
