@@ -2,7 +2,7 @@
   {
     "id": "txn_0001",
     "description": "Lunch at cafeteria",
-    "amount": 2000,
+    "amount": 1750,
     "category": "Food",
     "date": "2025-09-25",
     "createdAt": "2025-09-25T12:10:00.000Z",
@@ -11,7 +11,7 @@
   {
     "id": "txn_0002",
     "description": "Chemistry textbook",
-    "amount": 28000,
+    "amount": 38500,
     "category": "Books",
     "date": "2025-09-23",
     "createdAt": "2025-09-23T09:30:00.000Z",
@@ -20,7 +20,7 @@
   {
     "id": "txn_0003",
     "description": "Monthly bus pass",
-    "amount": 12000,
+    "amount": 9000,
     "category": "Transport",
     "date": "2025-09-20",
     "createdAt": "2025-09-20T08:00:00.000Z",
@@ -29,7 +29,7 @@
   {
     "id": "txn_0004",
     "description": "Coffee with friends",
-    "amount": 2500,
+    "amount": 3400,
     "category": "Entertainment",
     "date": "2025-09-28",
     "createdAt": "2025-09-28T16:45:00.000Z",
@@ -38,16 +38,16 @@
   {
     "id": "txn_0005",
     "description": "Printing fees for for lab report",
-    "amount": 500,
+    "amount": 350,
     "category": "Fees",
-    "date": "2026-06-05",
-    "createdAt": "2026-06-05T10:05:00.000Z",
-    "updatedAt": "2026-06-05T10:05:00.000Z"
+    "date": "2026-06-17",
+    "createdAt": "2026-06-17T10:05:00.000Z",
+    "updatedAt": "2026-06-17T10:05:00.000Z"
   },
   {
     "id": "txn_0006",
     "description": "Semester tuition installment",
-    "amount": 350000,
+    "amount": 275000,
     "category": "Fees",
     "date": "2026-05-28",
     "createdAt": "2026-05-28T14:00:00.000Z",
@@ -56,43 +56,43 @@
   {
     "id": "txn_0007",
     "description": "Single photocopy",
-    "amount": 50,
+    "amount": 25,
     "category": "Other",
-    "date": "2026-06-06",
-    "createdAt": "2026-06-06T11:20:00.000Z",
-    "updatedAt": "2026-06-06T11:20:00.000Z"
+    "date": "2026-06-13",
+    "createdAt": "2026-06-13T11:20:00.000Z",
+    "updatedAt": "2026-06-13T11:20:00.000Z"
   },
   {
     "id": "txn_0008",
     "description": "Groceries at weekend market",
-    "amount": 6500,
+    "amount": 14600,
     "category": "Food",
-    "date": "2026-06-07",
-    "createdAt": "2026-06-07T09:15:00.000Z",
-    "updatedAt": "2026-06-07T09:15:00.000Z"
+    "date": "2026-06-16",
+    "createdAt": "2026-06-16T09:15:00.000Z",
+    "updatedAt": "2026-06-16T09:15:00.000Z"
   },
   {
     "id": "txn_0009",
     "description": "Moto taxi to campus",
-    "amount": 700,
+    "amount": 1200,
     "category": "Transport",
-    "date": "2026-06-09",
-    "createdAt": "2026-06-09T07:50:00.000Z",
-    "updatedAt": "2026-06-09T07:50:00.000Z"
+    "date": "2026-06-12",
+    "createdAt": "2026-06-12T07:50:00.000Z",
+    "updatedAt": "2026-06-12T07:50:00.000Z"
   },
   {
     "id": "txn_0010",
     "description": "Movie night ticket",
-    "amount": 4000,
+    "amount": 6000,
     "category": "Entertainment",
-    "date": "2026-06-10",
-    "createdAt": "2026-06-10T19:30:00.000Z",
-    "updatedAt": "2026-06-10T19:30:00.000Z"
+    "date": "2026-06-14",
+    "createdAt": "2026-06-14T19:30:00.000Z",
+    "updatedAt": "2026-06-14T19:30:00.000Z"
   },
   {
     "id": "txn_0011",
     "description": "Second-hand novel",
-    "amount": 1800,
+    "amount": 2300,
     "category": "Books",
     "date": "2026-06-04",
     "createdAt": "2026-06-04T15:40:00.000Z",
@@ -101,7 +101,7 @@
   {
     "id": "txn_0012",
     "description": "Data bundle top-up",
-    "amount": 3000,
+    "amount": 5400,
     "category": "Other",
     "date": "2026-05-30",
     "createdAt": "2026-05-30T18:00:00.000Z",

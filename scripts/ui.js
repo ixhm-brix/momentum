@@ -4,28 +4,39 @@ import { highlight, escapeHtml } from './search.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-const KNOWN_SYMBOLS = {
-  USD: '$', EUR: '€', GBP: '£', RWF: 'FRw ', KES: 'KSh ',
-  NGN: '₦', JPY: '¥', GHS: 'GH₵ ', ZAR: 'R ', CAD: 'CA$',
-};
+const SYMBOLS = { RWF: 'RWF ', USD: '$', EUR: '€' };
 
-export function symbolFor(code) {
-  return KNOWN_SYMBOLS[code] || `${code} `;
+// Currencies with no minor unit are shown without decimals.
+const ZERO_DECIMAL = new Set(['RWF', 'JPY', 'KRW', 'UGX', 'XOF', 'XAF', 'VND', 'CLP']);
+
+// Every currency the app knows: the base plus the manual-rate ones.
+function allCurrencies(settings) {
+  return [settings.baseCurrency, ...Object.keys(settings.rates)];
 }
 
-export function money(amount, symbol = '$') {
-  const n = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
-  return `${symbol}${n}`;
+// Convert an amount (always stored in the base currency) into `cur`.
+// rates[cur] = how many base units 1 unit of cur is worth, so we divide.
+function convert(amountBase, cur, settings) {
+  if (cur === settings.baseCurrency) return amountBase;
+  const rate = settings.rates[cur];
+  return rate > 0 ? amountBase / rate : amountBase;
+}
+
+function formatNumber(value, cur) {
+  const dec = ZERO_DECIMAL.has(cur) ? 0 : 2;
+  return value.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+
+// Symbol + amount, shown in a currency (defaults to the chosen display currency).
+export function money(amountBase, settings, cur = settings.displayCurrency) {
+  const sym = SYMBOLS[cur] || `${cur} `;
+  return sym + formatNumber(convert(amountBase, cur, settings), cur);
 }
 
 /* ---------- Transactions ---------- */
 
 export function renderTable(records, re, settings) {
   const tbody = $('#txn-tbody');
-  const sym = settings.base.symbol;
   tbody.innerHTML = records
     .map(
       (t) => `
@@ -33,7 +44,7 @@ export function renderTable(records, re, settings) {
       <td data-label="Description" class="cell-desc">${highlight(t.description, re)}</td>
       <td data-label="Category"><span class="cat-chip">${highlight(t.category, re)}</span></td>
       <td data-label="Date" class="num">${highlight(t.date, re)}</td>
-      <td data-label="Amount" class="num cell-amount">${money(t.amount, sym)}</td>
+      <td data-label="Amount" class="num cell-amount">${money(t.amount, settings)}</td>
       <td data-label="Actions" class="row-actions">
         <button type="button" class="btn btn-ghost btn-sm" data-action="edit" data-id="${t.id}">
           Edit<span class="visually-hidden"> ${escapeHtml(t.description)}</span>
@@ -87,52 +98,46 @@ function countUp(el, target, format) {
   el._raf = requestAnimationFrame(tick);
 }
 
-// Some currencies have no cents, so show no decimals.
-const ZERO_DECIMAL = new Set(['RWF', 'JPY', 'KRW', 'UGX', 'XOF', 'XAF', 'VND', 'CLP']);
-function formatAmount(value, code) {
-  const dec = ZERO_DECIMAL.has(code) ? 0 : 2;
-  return value.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
-}
-
 export function renderDashboard(stats, monthSpent, settings) {
-  const sym = settings.base.symbol;
-  const code = settings.base.code;
+  const cur = settings.displayCurrency;
 
-  // Fill in the total on the banknote.
-  $('#stat-total').textContent = formatAmount(stats.total, code);
-  $('#hero-cur').textContent = code;
-  $('#hero-period').textContent = `All entries · ${code}`;
+  // Fill in the total on the banknote (the code shows the currency).
+  $('#stat-total').textContent = formatNumber(convert(stats.total, cur, settings), cur);
+  $('#hero-cur').textContent = cur;
+  $('#hero-period').textContent = `All entries · ${cur}`;
   $('#hero-words').textContent = stats.count
     ? `${stats.count} ${stats.count === 1 ? 'entry' : 'entries'} · led by ${stats.topCategory ? stats.topCategory.name : '—'}`
     : 'No entries recorded yet';
   $('#hero-serial').textContent = `SER · RL—${String(stats.count).padStart(4, '0')}—A`;
+  // Caption shows the same total in the other currencies.
+  const otherCurrencies = allCurrencies(settings).filter((c) => c !== cur);
   $('#stat-conversions').textContent =
     stats.total > 0
-      ? settings.others.map((o) => `≈ ${o.code} ${formatAmount(stats.total * o.rate, o.code)}`).join('   ·   ')
+      ? otherCurrencies.map((c) => `≈ ${money(stats.total, settings, c)}`).join('   ·   ')
       : '';
 
   countUp($('#stat-count'), stats.count, (v) => String(Math.round(v)));
   $('#stat-top').textContent = stats.topCategory ? stats.topCategory.name : '—';
   $('#stat-top-detail').textContent = stats.topCategory
-    ? money(stats.topCategory.total, sym)
+    ? money(stats.topCategory.total, settings)
     : 'no entries yet';
-  renderChart(stats.last7, sym);
+  renderChart(stats.last7, settings);
   renderCap(monthSpent, settings);
 }
 
-function renderChart(last7, sym) {
+function renderChart(last7, settings) {
   const chart = $('#chart');
   const max = Math.max(...last7.map((d) => d.total), 1);
   const avg = last7.reduce((s, d) => s + d.total, 0) / 7;
   const avgPct = Math.round((avg / max) * 100);
   chart.innerHTML = `
     <div class="chart-plot" style="--avg:${avgPct}">
-      ${avg > 0 ? `<span class="chart-avg" aria-hidden="true"><i>avg ${money(avg, sym)}</i></span>` : ''}
+      ${avg > 0 ? `<span class="chart-avg" aria-hidden="true"><i>avg ${money(avg, settings)}</i></span>` : ''}
       ${last7
         .map(
           (d) => `
       <div class="chart-col">
-        <span class="chart-val">${d.total ? money(d.total, sym) : ''}</span>
+        <span class="chart-val">${d.total ? money(d.total, settings) : ''}</span>
         <span class="chart-bar${d.total ? '' : ' is-empty'}" style="--h:${Math.round((d.total / max) * 100)}"></span>
       </div>`
         )
@@ -144,14 +149,13 @@ function renderChart(last7, sym) {
   chart.setAttribute(
     'aria-label',
     `Bar chart of spending for the last 7 days. ${last7
-      .map((d) => `${d.label} ${d.dayNum}: ${money(d.total, sym)}`)
+      .map((d) => `${d.label} ${d.dayNum}: ${money(d.total, settings)}`)
       .join(', ')}.`
   );
 }
 
 function renderCap(monthSpent, settings) {
   const cap = Number(settings.cap) || 0;
-  const sym = settings.base.symbol;
   const card = $('#budget-card');
   const fill = $('#cap-meter-fill');
   const figure = $('#cap-figure');
@@ -175,23 +179,23 @@ function renderCap(monthSpent, settings) {
   const remaining = cap - monthSpent;
   const pct = Math.min(100, (monthSpent / cap) * 100);
   fill.style.width = `${pct}%`;
-  figure.textContent = `${money(monthSpent, sym)} of ${money(cap, sym)}`;
+  figure.textContent = `${money(monthSpent, settings)} of ${money(cap, settings)}`;
 
   if (remaining >= 0) {
-    note.textContent = `${money(remaining, sym)} remaining this month.`;
+    note.textContent = `${money(remaining, settings)} remaining this month.`;
     fill.classList.remove('is-over');
     card.classList.remove('is-over');
     stamp.hidden = true;
     // gentle message while under the cap
-    polite.textContent = `Within budget — ${money(remaining, sym)} remaining this month.`;
+    polite.textContent = `Within budget — ${money(remaining, settings)} remaining this month.`;
     assertive.textContent = '';
   } else {
-    note.textContent = `Over by ${money(-remaining, sym)} this month.`;
+    note.textContent = `Over by ${money(-remaining, settings)} this month.`;
     fill.classList.add('is-over');
     card.classList.add('is-over');
     stamp.hidden = false;
     // urgent message once over the cap
-    assertive.textContent = `Budget exceeded by ${money(-remaining, sym)} this month.`;
+    assertive.textContent = `Budget exceeded by ${money(-remaining, settings)} this month.`;
     polite.textContent = '';
   }
 }
@@ -226,12 +230,9 @@ export function renderCategoryList(categories) {
 
 export function renderSettingsInputs(settings) {
   $('#set-cap').value = settings.cap || '';
-  $('#base-code').value = settings.base.code;
-  $('#base-symbol').value = settings.base.symbol;
-  $('#alt1-code').value = settings.others[0].code;
-  $('#alt1-rate').value = settings.others[0].rate;
-  $('#alt2-code').value = settings.others[1].code;
-  $('#alt2-rate').value = settings.others[1].rate;
+  $('#display-currency').value = settings.displayCurrency;
+  $('#rate-usd').value = settings.rates.USD;
+  $('#rate-eur').value = settings.rates.EUR;
 }
 
 /* ---------- Form errors ---------- */

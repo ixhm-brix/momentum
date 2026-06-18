@@ -6,12 +6,10 @@ const DATA_KEY = 'finance:data';
 const SETTINGS_KEY = 'finance:settings';
 
 export const DEFAULT_SETTINGS = {
-  cap: 400000,
-  base: { code: 'RWF', symbol: 'FRw ' },
-  others: [
-    { code: 'USD', rate: 0.00069 }, // 1 RWF ≈ 0.00069 USD
-    { code: 'EUR', rate: 0.00064 }, // 1 RWF ≈ 0.00064 EUR
-  ],
+  cap: 400000,                     // stored in the base currency (RWF)
+  baseCurrency: 'RWF',             // amounts are ALWAYS stored in this
+  displayCurrency: 'RWF',          // what amounts are shown in (RWF | USD | EUR)
+  rates: { USD: 1300, EUR: 1450 }, // how many RWF 1 unit of each is worth
   categories: ['Food', 'Books', 'Transport', 'Entertainment', 'Fees', 'Other'],
 };
 

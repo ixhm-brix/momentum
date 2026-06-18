@@ -133,7 +133,7 @@ function handleSubmit(event) {
     ui.announce(`Updated entry ${editingId}.`);
   } else {
     const record = state.add(payload);
-    ui.announce(`Logged ${record.id} — ${ui.money(record.amount, state.getSettings().base.symbol)}.`);
+    ui.announce(`Logged ${record.id} — ${ui.money(record.amount, state.getSettings())}.`);
   }
 
   resetForm();
@@ -162,30 +162,29 @@ function handleCapSubmit(event) {
   }
   state.updateSettings({ cap: value });
   renderDashboard();
-  ui.announce(value === 0 ? 'Spending cap removed.' : `Spending cap set to ${ui.money(value, state.getSettings().base.symbol)}.`);
+  ui.announce(value === 0 ? 'Spending cap removed.' : `Spending cap set to ${ui.money(value, state.getSettings())}.`);
 }
 
+// Save the manually-typed exchange rates (how many RWF each currency is worth).
 function handleCurrencySubmit(event) {
   event.preventDefault();
-  const base = {
-    code: $('#base-code').value.trim().toUpperCase(),
-    symbol: $('#base-symbol').value.trim() || '$',
-  };
-  const others = [
-    { code: $('#alt1-code').value.trim().toUpperCase(), rate: Number($('#alt1-rate').value) },
-    { code: $('#alt2-code').value.trim().toUpperCase(), rate: Number($('#alt2-rate').value) },
-  ];
-  if (!/^[A-Z]{3}$/.test(base.code) || others.some((o) => !/^[A-Z]{3}$/.test(o.code))) {
-    ui.announce('Currency codes must be 3 letters, e.g. USD.');
-    return;
-  }
-  if (others.some((o) => !Number.isFinite(o.rate) || o.rate <= 0)) {
+  const usd = Number($('#rate-usd').value);
+  const eur = Number($('#rate-eur').value);
+  if (![usd, eur].every((r) => Number.isFinite(r) && r > 0)) {
     ui.announce('Exchange rates must be positive numbers.');
     return;
   }
-  state.updateSettings({ base, others });
+  state.updateSettings({ rates: { USD: usd, EUR: eur } });
   renderAll();
-  ui.announce('Currency settings saved.');
+  ui.announce('Exchange rates saved.');
+}
+
+// Switch which currency every amount is displayed in (conversion is display-only;
+// the stored records stay in RWF). Re-render the whole app immediately.
+function handleDisplayCurrency(event) {
+  state.updateSettings({ displayCurrency: event.target.value });
+  renderAll();
+  ui.announce(`Now showing amounts in ${event.target.value}.`);
 }
 
 function handleAddCategory(event) {
@@ -334,6 +333,7 @@ function wireEvents() {
 
   $('#cap-form').addEventListener('submit', handleCapSubmit);
   $('#cur-form').addEventListener('submit', handleCurrencySubmit);
+  $('#display-currency').addEventListener('change', handleDisplayCurrency);
   $('#cat-form').addEventListener('submit', handleAddCategory);
   $('#cat-list').addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-remove-cat]');
