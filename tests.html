@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Momentum — Tests</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background: #f4efe2;
+      color: #26241c;
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      line-height: 1.5;
+    }
+    h1 { font-family: Georgia, serif; font-style: italic; color: #1e3a26; }
+    h2 { font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; margin-top: 2rem;
+         border-bottom: 3px double #26241c; padding-bottom: .3em; }
+    ul { list-style: none; padding: 0; }
+    li { padding: .25rem .5rem; border-bottom: 1px solid #e0d8c0; }
+    li.pass::before { content: "✓ "; color: #2c5237; font-weight: bold; }
+    li.fail::before { content: "✗ "; color: #8e2f1c; font-weight: bold; }
+    li.fail { background: #f3e4dd; color: #8e2f1c; font-weight: bold; }
+    #summary { font-size: 1.2rem; font-weight: bold; padding: 1rem;
+               border: 3px double #26241c; margin-top: 2rem; }
+    #summary.ok { color: #2c5237; }
+    #summary.bad { color: #8e2f1c; }
+    a { color: #1e3a26; }
+  </style>
+</head>
+<body>
+  <h1>Momentum — test ledger</h1>
+  <p>Plain assertions, no framework. <a href="index.html">← back to the app</a></p>
+  <div id="results"></div>
+  <p id="summary" role="status">Running…</p>
+
+  <script type="module">
+    import {
+      validateDescription, validateAmount, validateDate, validateCategory,
+      validateTransaction, RULES,
+    } from './scripts/validators.js';
+    import {
+      compileRegex, escapeHtml, highlight, filterRecords, sortRecords,
+    } from './scripts/search.js';
+    import { validateImport } from './scripts/storage.js';
+
+    const results = document.getElementById('results');
+    let currentList = null;
+    let passed = 0, failed = 0;
+
+    function suite(name) {
+      const h = document.createElement('h2');
+      h.textContent = name;
+      results.appendChild(h);
+      currentList = document.createElement('ul');
+      results.appendChild(currentList);
+    }
+
+    function test(name, fn) {
+      const li = document.createElement('li');
+      try {
+        fn();
+        li.className = 'pass';
+        li.textContent = name;
+        passed++;
+      } catch (err) {
+        li.className = 'fail';
+        li.textContent = `${name} — ${err.message}`;
+        failed++;
+      }
+      currentList.appendChild(li);
+    }
+
+    function assert(cond, msg = 'assertion failed') {
+      if (!cond) throw new Error(msg);
+    }
+    function assertEqual(actual, expected) {
+      if (actual !== expected) throw new Error(`expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+    }
+
+    /* ---------------- Validators ---------------- */
+    suite('Validators — description');
+    test('accepts a clean description', () => assert(validateDescription('Lunch at cafeteria') === null));
+    test('accepts a single character', () => assert(validateDescription('x') === null));
+    test('rejects leading space', () => assert(validateDescription(' lunch') !== null));
+    test('rejects trailing space', () => assert(validateDescription('lunch ') !== null));
+    test('rejects double spaces', () => assert(validateDescription('lunch  today') !== null));
+    test('rejects empty string', () => assert(validateDescription('') !== null));
+    test('back-reference catches "the the coffee"', () => assert(validateDescription('the the coffee') !== null));
+    test('back-reference is case-insensitive ("The the")', () => assert(validateDescription('The the coffee') !== null));
+    test('allows legitimate repeats with words between', () => assert(validateDescription('tea for me and tea for you') === null));
+
+    suite('Validators — amount');
+    test('accepts 12.50', () => assert(validateAmount('12.50') === null));
+    test('accepts 0', () => assert(validateAmount('0') === null));
+    test('accepts 0.05', () => assert(validateAmount('0.05') === null));
+    test('accepts integer 1250', () => assert(validateAmount('1250') === null));
+    test('rejects leading zero "012"', () => assert(validateAmount('012') !== null));
+    test('rejects three decimals "12.555"', () => assert(validateAmount('12.555') !== null));
+    test('rejects negative "-5"', () => assert(validateAmount('-5') !== null));
+    test('rejects empty string', () => assert(validateAmount('') !== null));
+    test('rejects "12."', () => assert(validateAmount('12.') !== null));
+
+    suite('Validators — date');
+    test('accepts 2026-06-11', () => assert(validateDate('2026-06-11') === null));
+    test('accepts 2025-12-31', () => assert(validateDate('2025-12-31') === null));
+    test('rejects month 13', () => assert(validateDate('2026-13-01') !== null));
+    test('rejects day 32', () => assert(validateDate('2026-01-32') !== null));
+    test('rejects unpadded "2026-6-1"', () => assert(validateDate('2026-6-1') !== null));
+    test('rejects DD-MM-YYYY order', () => assert(validateDate('11-06-2026') !== null));
+    test('rejects empty string', () => assert(validateDate('') !== null));
+
+    suite('Validators — category');
+    test('accepts "Food"', () => assert(validateCategory('Food') === null));
+    test('accepts "Side-Hustle Costs"', () => assert(validateCategory('Side-Hustle Costs') === null));
+    test('rejects digits "Food1"', () => assert(validateCategory('Food1') !== null));
+    test('rejects double space', () => assert(validateCategory('Fast  Food') !== null));
+    test('rejects empty string', () => assert(validateCategory('') !== null));
+    test('rejects leading hyphen "-Food"', () => assert(validateCategory('-Food') !== null));
+
+    suite('Validators — whole transaction');
+    test('valid payload returns no errors', () => {
+      const errors = validateTransaction({ description: 'Bus pass', amount: '45.00', category: 'Transport', date: '2026-06-01' });
+      assertEqual(Object.keys(errors).length, 0);
+    });
+    test('invalid payload flags every bad field', () => {
+      const errors = validateTransaction({ description: ' bad ', amount: '012', category: 'F00d', date: '2026-13-99' });
+      assertEqual(Object.keys(errors).length, 4);
+    });
+
+    /* ---------------- Safe regex compiler ---------------- */
+    suite('Safe regex compiler');
+    test('compiles a valid pattern', () => assert(compileRegex('coffee') instanceof RegExp));
+    test('returns null for empty input', () => assert(compileRegex('') === null));
+    test('returns null for invalid pattern "(" without throwing', () => assert(compileRegex('(') === null));
+    test('returns null for invalid pattern "[a-" without throwing', () => assert(compileRegex('[a-') === null));
+    test('respects requested flags', () => assert(compileRegex('tea', 'i').flags.includes('i')));
+
+    /* ---------------- Highlight ---------------- */
+    suite('Highlight');
+    test('wraps a match in <mark>', () => {
+      assertEqual(highlight('morning coffee', compileRegex('coffee')), 'morning <mark>coffee</mark>');
+    });
+    test('escapes HTML in the source text', () => {
+      const out = highlight('<b>x & y</b>', null);
+      assertEqual(out, '&lt;b&gt;x &amp; y&lt;/b&gt;');
+    });
+    test('escapes HTML even when highlighting', () => {
+      const out = highlight('<script> coffee', compileRegex('coffee'));
+      assert(out.includes('&lt;script&gt;'), 'tags must be escaped');
+      assert(out.includes('<mark>coffee</mark>'), 'match must be wrapped');
+    });
+    test('zero-length matches never produce empty <mark>', () => {
+      const out = highlight('abc', compileRegex('x*'));
+      assert(!out.includes('<mark></mark>'), 'no empty mark elements');
+      assert(out.includes('abc'), 'text preserved');
+    });
+    test('null regex returns escaped text unchanged', () => {
+      assertEqual(highlight('plain text', null), 'plain text');
+    });
+    test('highlights all occurrences, not just the first', () => {
+      const out = highlight('tea and tea', compileRegex('tea'));
+      assertEqual((out.match(/<mark>/g) || []).length, 2);
+    });
+
+    /* ---------------- Filter & sort ---------------- */
+    const sample = [
+      { id: 'txn_0001', description: 'Morning coffee', category: 'Food', date: '2026-06-01', amount: 2.5, createdAt: '2026-06-01T08:00:00.000Z', updatedAt: '2026-06-01T08:00:00.000Z' },
+      { id: 'txn_0002', description: 'Bus ticket', category: 'Transport', date: '2026-06-03', amount: 1.2, createdAt: '2026-06-03T08:00:00.000Z', updatedAt: '2026-06-03T08:00:00.000Z' },
+      { id: 'txn_0003', description: 'Algebra textbook', category: 'Books', date: '2026-06-02', amount: 40, createdAt: '2026-06-02T08:00:00.000Z', updatedAt: '2026-06-02T08:00:00.000Z' },
+    ];
+
+    suite('Filter');
+    test('matches against description', () => {
+      assertEqual(filterRecords(sample, compileRegex('coffee', 'i')).length, 1);
+    });
+    test('matches against category', () => {
+      assertEqual(filterRecords(sample, compileRegex('transport', 'i')).length, 1);
+    });
+    test('null regex returns everything', () => {
+      assertEqual(filterRecords(sample, null).length, 3);
+    });
+    test('case-insensitive flag widens the match', () => {
+      assertEqual(filterRecords(sample, compileRegex('COFFEE', 'i')).length, 1);
+      assertEqual(filterRecords(sample, compileRegex('COFFEE', '')).length, 0);
+    });
+    test('alternation pattern (coffee|tea) works', () => {
+      assertEqual(filterRecords(sample, compileRegex('(coffee|ticket)', 'i')).length, 2);
+    });
+    test('does not mutate the input array', () => {
+      const before = sample.map((r) => r.id).join();
+      filterRecords(sample, compileRegex('a'));
+      assertEqual(sample.map((r) => r.id).join(), before);
+    });
+
+    suite('Sort');
+    test('amount — highest first', () => {
+      assertEqual(sortRecords(sample, 'amount-desc')[0].id, 'txn_0003');
+    });
+    test('amount — lowest first', () => {
+      assertEqual(sortRecords(sample, 'amount-asc')[0].id, 'txn_0002');
+    });
+    test('description A→Z', () => {
+      assertEqual(sortRecords(sample, 'description-asc')[0].description, 'Algebra textbook');
+    });
+    test('description Z→A', () => {
+      assertEqual(sortRecords(sample, 'description-desc')[0].description, 'Morning coffee');
+    });
+    test('date added — newest first', () => {
+      assertEqual(sortRecords(sample, 'created-desc')[0].id, 'txn_0002');
+    });
+    test('date added — oldest first', () => {
+      assertEqual(sortRecords(sample, 'created-asc')[0].id, 'txn_0001');
+    });
+    test('sort returns a copy, never mutates', () => {
+      const before = sample.map((r) => r.id).join();
+      sortRecords(sample, 'amount-desc');
+      assertEqual(sample.map((r) => r.id).join(), before);
+    });
+
+    /* ---------------- Import validation ---------------- */
+    const goodRecord = {
+      id: 'txn_0001', description: 'Lunch', amount: 5, category: 'Food',
+      date: '2026-06-01', createdAt: '2026-06-01T10:00:00.000Z', updatedAt: '2026-06-01T10:00:00.000Z',
+    };
+
+    suite('Import validation');
+    test('accepts a valid array', () => {
+      const r = validateImport(JSON.stringify([goodRecord]));
+      assert(r.ok, r.error);
+      assertEqual(r.records.length, 1);
+    });
+    test('rejects broken JSON', () => {
+      const r = validateImport('{ not json');
+      assert(!r.ok && /JSON/i.test(r.error));
+    });
+    test('rejects a non-array (object)', () => {
+      const r = validateImport(JSON.stringify(goodRecord));
+      assert(!r.ok && /array/i.test(r.error));
+    });
+    test('rejects a missing required field', () => {
+      const { amount, ...broken } = goodRecord;
+      const r = validateImport(JSON.stringify([broken]));
+      assert(!r.ok && /amount/.test(r.error));
+    });
+    test('rejects a bad date format', () => {
+      const r = validateImport(JSON.stringify([{ ...goodRecord, date: '01/06/2026' }]));
+      assert(!r.ok && /YYYY-MM-DD/.test(r.error));
+    });
+    test('rejects duplicate ids', () => {
+      const r = validateImport(JSON.stringify([goodRecord, { ...goodRecord }]));
+      assert(!r.ok && /[Dd]uplicate/.test(r.error));
+    });
+    test('rejects a non-numeric amount', () => {
+      const r = validateImport(JSON.stringify([{ ...goodRecord, amount: '5' }]));
+      assert(!r.ok && /amount/i.test(r.error));
+    });
+    test('accepts an empty array', () => {
+      assert(validateImport('[]').ok);
+    });
+
+    /* ---------------- Finance search patterns from the README ---------------- */
+    suite('README search patterns');
+    test('/\\.\\d{2}\\b/ matches amounts with cents', () => {
+      assert(/\.\d{2}\b/.test('paid 12.50 today'));
+      assert(!/\.\d{2}\b/.test('paid 12 today'));
+    });
+    test('/(coffee|tea)/i finds beverages', () => {
+      assert(/(coffee|tea)/i.test('Morning Coffee'));
+      assert(!/(coffee|tea)/i.test('Bus pass'));
+    });
+    test('/\\b(\\w+)\\s+\\1\\b/ catches duplicate words', () => {
+      assert(RULES.repeatedWord.test('printing fees for for lab'));
+      assert(!RULES.repeatedWord.test('printing fees for the lab'));
+    });
+
+    /* ---------------- Summary ---------------- */
+    const summary = document.getElementById('summary');
+    summary.textContent = `${passed} passed, ${failed} failed — ${failed === 0 ? 'the books balance.' : 'the books do not balance!'}`;
+    summary.className = failed === 0 ? 'ok' : 'bad';
+  </script>
+</body>
+</html>
