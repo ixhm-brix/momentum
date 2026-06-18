@@ -4,7 +4,6 @@
 
 html {
   scroll-behavior: smooth;
-  scrollbar-color: #57523f #f4efe2;
 }
 
 body {
@@ -43,14 +42,6 @@ body::after {
   pointer-events: none;
   opacity: 0.55;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-}
-
-::-webkit-scrollbar { width: 12px; }
-::-webkit-scrollbar-track { background: #f4efe2; }
-::-webkit-scrollbar-thumb {
-  background: #57523f;
-  border: 3px solid #f4efe2;
-  border-radius: 999px;
 }
 
 [hidden] { display: none !important; }
@@ -779,6 +770,7 @@ input[type="text"], input[type="number"], input[type="date"], select {
   font-size: 0.95rem;
   color: #26241c;
   background: #f4efe2;
+  
   border: 1px solid #c3b790;
   border-bottom: 2px solid #26241c;
   border-radius: 4px 4px 0 0;
@@ -803,6 +795,8 @@ select { cursor: pointer; }
 
 /* ---------- Buttons ---------- */
 
+
+
 .btn {
   font-family: "IBM Plex Mono", "Courier New", monospace;
   font-size: 0.82rem;
@@ -818,6 +812,7 @@ select { cursor: pointer; }
 .btn:active { transform: translateY(2px); }
 
 /* Layered inner borders. */
+
 .btn-primary {
   background: #1e3a26;
   color: #f4efe2;
@@ -882,13 +877,17 @@ select { cursor: pointer; }
 
 .txn-row td::before {
   content: attr(data-label);
-  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-family: " IBM Plex Mono", "Courier New", monospace;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #57523f;
   flex-shrink: 0;
 }
+
+
+
+
 
 .cell-desc { font-style: italic; font-size: 1.05rem; }
 .cell-amount, .num { font-family: "IBM Plex Mono", "Courier New", monospace; font-variant-numeric: tabular-nums; }
@@ -1058,11 +1057,9 @@ select { cursor: pointer; }
 
 .about-seal {
   width: 172px;
-  height: 172px;
-  color: #c7bb9c;
+  height: auto;
   transform: rotate(-12deg);
-  filter: drop-shadow(0 1px 0 rgba(255, 253, 246, 0.85))
-          drop-shadow(0 -1px 0 rgba(38, 36, 28, 0.18));
+  opacity: 0.8;
 }
 
 .about-lede { font-size: 1.18rem; font-style: italic; margin-top: 0; }

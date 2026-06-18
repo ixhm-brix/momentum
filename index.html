@@ -6,7 +6,8 @@
   <title>Momentum  Student Finance Tracker</title>
   <meta name="description" content="Momentum — a student's ledger of small spendings. Log expenses, search with regex, and stay within budget.">
   <meta name="theme-color" content="#F4EFE2">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 23c0-9 5-16 14-18-1 9-5 15-11 17' fill='%232C5237'/%3E%3Ccircle cx='9' cy='24' r='3.4' fill='%2326241C'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Fonts load asynchronously (media swap) so a slow/blocked font CDN can
@@ -198,7 +199,7 @@
       </p>
     </section>
 
-    <!-- ============ ADD / EDIT ============ -->
+    <!-- ============ ADD / EDIT ========== -->
     <section id="add" class="panel" hidden aria-labelledby="add-title">
       <p class="folio">№ 03 · in your own hand</p>
       <h2 id="add-title"><span id="add-title-mode">Add an entry</span></h2>
@@ -240,7 +241,7 @@
       </form>
     </section>
 
-    <!-- ============ SETTINGS ============ -->
+    <!-- ============ SETTINGS ========== -->
     <section id="settings" class="panel" hidden aria-labelledby="settings-title">
       <p class="folio">№ 04 · the bookkeeper’s desk</p>
       <h2 id="settings-title">Settings</h2>
@@ -320,7 +321,7 @@
       </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
+    <!-- =========== ABOUT ============ -->
     <section id="about" class="panel" hidden aria-labelledby="about-title">
       <p class="folio">№ 05 · the keeper of this book</p>
       <h2 id="about-title">About</h2>
@@ -361,21 +362,7 @@
           </div>
 
           <!-- Decorative seal -->
-          <svg class="about-seal" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
-            <defs>
-              <path id="seal-arc" d="M80 80m-56 0a56 56 0 1 1 112 0a56 56 0 1 1 -112 0"/>
-            </defs>
-            <circle cx="80" cy="80" r="73" fill="none" stroke="currentColor" stroke-width="2.5"/>
-            <circle cx="80" cy="80" r="67" fill="none" stroke="currentColor" stroke-width="1"/>
-            <circle cx="80" cy="80" r="40" fill="none" stroke="currentColor" stroke-width="1"/>
-            <text font-size="11" letter-spacing="1.6" font-family="'IBM Plex Mono', monospace" fill="currentColor">
-              <textPath href="#seal-arc">MOMENTUM · A STUDENT’S LEDGER · EST. 2026 ·</textPath>
-            </text>
-            <g fill="currentColor" transform="translate(56,55) scale(0.78)">
-              <path d="M18 46C18 26 30 12 52 8c-2 20-12 32-26 36"/>
-              <circle cx="17" cy="48" r="6.5"/>
-            </g>
-          </svg>
+          <img class="about-seal" src="assets/seal.png" alt="" aria-hidden="true">
         </aside>
       </div>
     </section>
