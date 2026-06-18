@@ -13,7 +13,6 @@ body {
   background: #f4efe2;
   color: #26241c;
   font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
-  font-optical-sizing: auto;
   font-size: 1.0625rem;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -50,7 +49,7 @@ body::after {
   position: absolute !important;
   width: 1px; height: 1px;
   margin: -1px; padding: 0; border: 0;
-  clip: rect(0 0 0 0); clip-path: inset(50%);
+  clip: rect(0 0 0 0);
   overflow: hidden; white-space: nowrap;
 }
 
@@ -318,7 +317,7 @@ a:hover { color: #8e2f1c; }
     position: absolute;
     width: 1px; height: 1px;
     margin: -1px; padding: 0; border: 0;
-    clip: rect(0 0 0 0); clip-path: inset(50%);
+    clip: rect(0 0 0 0);
     overflow: hidden; white-space: nowrap;
   }
 }
