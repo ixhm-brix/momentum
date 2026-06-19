@@ -2,7 +2,7 @@
 
 > **Live app:** https://ixhm-brix.github.io/momentum/
 > **Wireframe & data-model:** https://canva.link/kzdrgmjwtnqmhie
-> **Demo video:** *link*
+> **Demo video:** https://youtu.be/JCxqR_vWNvk
 
 **Theme: Student Finance Tracker.** Momentum is a browser app for students to log
 expenses, search them with regular expressions, watch the week's spending, and get
