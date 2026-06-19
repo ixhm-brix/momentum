@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Momentum — Tests</title>
+  <title>Momentum: Tests</title>
   <style>
     body {
       font-family: "Courier New", monospace;
@@ -30,8 +30,8 @@
   </style>
 </head>
 <body>
-  <h1>Momentum — test ledger</h1>
-  <p>Plain assertions, no framework. <a href="index.html">← back to the app</a></p>
+  <h1>Momentum: test ledger</h1>
+  <p><a href="index.html">← back to the app</a></p>
   <div id="results"></div>
   <p id="summary" role="status">Running…</p>
 
@@ -66,7 +66,7 @@
         passed++;
       } catch (err) {
         li.className = 'fail';
-        li.textContent = `${name} — ${err.message}`;
+        li.textContent = `${name}: ${err.message}`;
         failed++;
       }
       currentList.appendChild(li);
@@ -80,7 +80,7 @@
     }
 
     /* ---------------- Validators ---------------- */
-    suite('Validators — description');
+    suite('Validators: description');
     test('accepts a clean description', () => assert(validateDescription('Lunch at cafeteria') === null));
     test('accepts a single character', () => assert(validateDescription('x') === null));
     test('rejects leading space', () => assert(validateDescription(' lunch') !== null));
@@ -91,7 +91,7 @@
     test('back-reference is case-insensitive ("The the")', () => assert(validateDescription('The the coffee') !== null));
     test('allows legitimate repeats with words between', () => assert(validateDescription('tea for me and tea for you') === null));
 
-    suite('Validators — amount');
+    suite('Validators: amount');
     test('accepts 12.50', () => assert(validateAmount('12.50') === null));
     test('accepts 0', () => assert(validateAmount('0') === null));
     test('accepts 0.05', () => assert(validateAmount('0.05') === null));
@@ -102,7 +102,7 @@
     test('rejects empty string', () => assert(validateAmount('') !== null));
     test('rejects "12."', () => assert(validateAmount('12.') !== null));
 
-    suite('Validators — date');
+    suite('Validators: date');
     test('accepts 2026-06-11', () => assert(validateDate('2026-06-11') === null));
     test('accepts 2025-12-31', () => assert(validateDate('2025-12-31') === null));
     test('rejects month 13', () => assert(validateDate('2026-13-01') !== null));
@@ -111,7 +111,7 @@
     test('rejects DD-MM-YYYY order', () => assert(validateDate('11-06-2026') !== null));
     test('rejects empty string', () => assert(validateDate('') !== null));
 
-    suite('Validators — category');
+    suite('Validators: category');
     test('accepts "Food"', () => assert(validateCategory('Food') === null));
     test('accepts "Side-Hustle Costs"', () => assert(validateCategory('Side-Hustle Costs') === null));
     test('rejects digits "Food1"', () => assert(validateCategory('Food1') !== null));
@@ -119,7 +119,7 @@
     test('rejects empty string', () => assert(validateCategory('') !== null));
     test('rejects leading hyphen "-Food"', () => assert(validateCategory('-Food') !== null));
 
-    suite('Validators — whole transaction');
+    suite('Validators: whole transaction');
     test('valid payload returns no errors', () => {
       const errors = validateTransaction({ description: 'Bus pass', amount: '45.00', category: 'Transport', date: '2026-06-01' });
       assertEqual(Object.keys(errors).length, 0);
@@ -195,10 +195,10 @@
     });
 
     suite('Sort');
-    test('amount — highest first', () => {
+    test('amount: highest first', () => {
       assertEqual(sortRecords(sample, 'amount-desc')[0].id, 'txn_0003');
     });
-    test('amount — lowest first', () => {
+    test('amount: lowest first', () => {
       assertEqual(sortRecords(sample, 'amount-asc')[0].id, 'txn_0002');
     });
     test('description A→Z', () => {
@@ -207,10 +207,10 @@
     test('description Z→A', () => {
       assertEqual(sortRecords(sample, 'description-desc')[0].description, 'Morning coffee');
     });
-    test('date added — newest first', () => {
+    test('date added: newest first', () => {
       assertEqual(sortRecords(sample, 'created-desc')[0].id, 'txn_0002');
     });
-    test('date added — oldest first', () => {
+    test('date added: oldest first', () => {
       assertEqual(sortRecords(sample, 'created-asc')[0].id, 'txn_0001');
     });
     test('sort returns a copy, never mutates', () => {
@@ -277,7 +277,7 @@
 
     /* ---------------- Summary ---------------- */
     const summary = document.getElementById('summary');
-    summary.textContent = `${passed} passed, ${failed} failed — ${failed === 0 ? 'the books balance.' : 'the books do not balance!'}`;
+    summary.textContent = `${passed} passed, ${failed} failed: ${failed === 0 ? 'the books balance.' : 'the books do not balance!'}`;
     summary.className = failed === 0 ? 'ok' : 'bad';
   </script>
 </body>

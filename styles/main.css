@@ -523,15 +523,6 @@ h3 {
 }
 .stat-card:hover { transform: translateY(-3px); box-shadow: 0 2px 0 rgba(38, 36, 28, 0.08), 0 18px 34px -18px rgba(38, 36, 28, 0.55); }
 
-.stat-card::before {
-  content: attr(data-mark);
-  position: absolute;
-  top: 0.5rem; right: 0.85rem;
-  font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
-  font-style: italic;
-  font-size: 1.15rem;
-  color: #8a6d1f;
-}
 
 .stat-figure {
   margin: 0.15rem 0 0;

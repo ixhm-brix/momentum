@@ -9,8 +9,7 @@ expenses, search them with regular expressions, watch the week's spending, and g
 flagged when they go over budget. It's styled like a hand-kept paper ledger and
 works in Rwandan francs.
 
-Built with plain **HTML, CSS and JavaScript** (ES modules) — no frameworks, no
-libraries, no servers. Your data stays in your browser.
+Built with plain **HTML, CSS and JavaScript** 
 
 ---
 

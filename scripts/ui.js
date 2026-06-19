@@ -105,10 +105,7 @@ export function renderDashboard(stats, monthSpent, settings) {
   $('#stat-total').textContent = formatNumber(convert(stats.total, cur, settings), cur);
   $('#hero-cur').textContent = cur;
   $('#hero-period').textContent = `All entries · ${cur}`;
-  $('#hero-words').textContent = stats.count
-    ? `${stats.count} ${stats.count === 1 ? 'entry' : 'entries'} · led by ${stats.topCategory ? stats.topCategory.name : '—'}`
-    : 'No entries recorded yet';
-  $('#hero-serial').textContent = `SER · RL—${String(stats.count).padStart(4, '0')}—A`;
+  $('#hero-words').textContent = stats.count ? 'Total spent' : 'Nothing spent';
   // Caption shows the same total in the other currencies.
   const otherCurrencies = allCurrencies(settings).filter((c) => c !== cur);
   $('#stat-conversions').textContent =

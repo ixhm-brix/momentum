@@ -102,21 +102,16 @@
         </div>
 
         <p class="microprint denomination__words" id="hero-words">Zero · no expenditure recorded</p>
-
-        <div class="note__foot">
-          <span class="serial" id="hero-serial">SER · RL—0000—A</span>
-          <span class="microprint">This Account · Personal Reserve</span>
-        </div>
       </section>
       <p class="note-exchange" id="stat-conversions" aria-label="Converted totals"></p>
 
       <div class="stat-grid">
-        <article class="stat-card" data-mark="a.">
+        <article class="stat-card">
           <h3>Entries kept</h3>
           <p class="stat-figure" id="stat-count">0</p>
           <p class="stat-detail">lines in the ledger</p>
         </article>
-        <article class="stat-card" data-mark="b.">
+        <article class="stat-card">
           <h3>Top category</h3>
           <p class="stat-figure" id="stat-top">—</p>
           <p class="stat-detail" id="stat-top-detail"></p>
@@ -205,8 +200,7 @@
         <div class="field field-wide">
           <label for="f-description">Description</label>
           <input type="text" id="f-description" name="description" autocomplete="off"
-                 aria-describedby="err-description hint-description">
-          <p class="hint" id="hint-description">No edge or double spaces; repeated words like “the the” are caught.</p>
+                 aria-describedby="err-description">
           <p class="field-error" id="err-description" role="alert" hidden></p>
         </div>
 
@@ -214,7 +208,7 @@
           <label for="f-amount">Amount</label>
           <input type="text" id="f-amount" name="amount" inputmode="decimal" autocomplete="off"
                  placeholder="12.50" aria-describedby="err-amount hint-amount">
-          <p class="hint" id="hint-amount">Entered in RWF (the base currency).</p>
+          <p class="hint" id="hint-amount">In RWF.</p>
           <p class="field-error" id="err-amount" role="alert" hidden></p>
         </div>
 
@@ -266,7 +260,7 @@
             </select>
           </div>
 
-          <p class="hint">Amounts are stored in RWF. Set how many francs each currency is worth:</p>
+          <p class="hint">Set how many francs each currency is worth:</p>
           <div class="cur-row">
             <div class="field">
               <label for="rate-usd">1 USD = ? RWF</label>
@@ -320,8 +314,8 @@
             small spendings deserve careful handwriting.
           </p>
           <p>
-            <strong>Momentum</strong> — because small spendings, faithfully recorded, gather
-            speed — is a student finance tracker. Log what you spend, search it with regular expressions,
+            <strong>Momentum</strong>  because small spendings, faithfully recorded, gather
+            speed  is a student finance tracker. Log what you spend, search it with regular expressions,
             watch the week's trend, and let a firm red stamp tell you when the budget is gone.
             Built with vanilla HTML, CSS and JavaScript. No frameworks; nothing between
             you and the page.
