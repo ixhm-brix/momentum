@@ -1,4 +1,4 @@
-// state.js — the data: records, add/edit/delete, settings, and totals.
+// state.js  the data. Holds entries, add/edit/delete, settings, and totals.
 // Every change saves to the browser right away.
 
 import { loadData, saveData, loadSettings, saveSettings } from './storage.js';
@@ -6,7 +6,7 @@ import { loadData, saveData, loadSettings, saveSettings } from './storage.js';
 let transactions = [];
 let settings = loadSettings();
 
-// Load saved records. Returns false on the first ever visit (nothing saved yet).
+// Load saved entries. Gives back false on the very first visit (nothing saved yet).
 export function boot() {
   const stored = loadData();
   if (stored === null) return false;
@@ -63,7 +63,7 @@ export function setAll(records) {
   saveData(transactions);
 }
 
-// Return a copy so outside code can't change our data directly.
+// Give back a copy so other code can't change our data directly.
 export const getSettings = () => JSON.parse(JSON.stringify(settings));
 
 export function updateSettings(patch) {

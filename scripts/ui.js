@@ -1,4 +1,4 @@
-// ui.js — draws the page. Holds no data; it's all passed in.
+// ui.js — draws the page. Keeps no data of its own; it's all passed in.
 
 import { highlight, escapeHtml } from './search.js';
 
@@ -6,16 +6,16 @@ const $ = (sel) => document.querySelector(sel);
 
 const SYMBOLS = { RWF: 'RWF ', USD: '$', EUR: '€' };
 
-// Currencies with no minor unit are shown without decimals.
+// Some currencies have no cents, so show them without decimals.
 const ZERO_DECIMAL = new Set(['RWF', 'JPY', 'KRW', 'UGX', 'XOF', 'XAF', 'VND', 'CLP']);
 
-// Every currency the app knows: the base plus the manual-rate ones.
+// All the currencies the app knows: the base one plus the ones with rates.
 function allCurrencies(settings) {
   return [settings.baseCurrency, ...Object.keys(settings.rates)];
 }
 
-// Convert an amount (always stored in the base currency) into `cur`.
-// rates[cur] = how many base units 1 unit of cur is worth, so we divide.
+// Change an amount (always kept in the base currency) into `cur`.
+// rates[cur] is how many base units 1 of cur is worth, so we divide.
 function convert(amountBase, cur, settings) {
   if (cur === settings.baseCurrency) return amountBase;
   const rate = settings.rates[cur];
@@ -27,7 +27,7 @@ function formatNumber(value, cur) {
   return value.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
 
-// Symbol + amount, shown in a currency (defaults to the chosen display currency).
+// The symbol plus the amount, shown in a currency (the chosen one by default).
 export function money(amountBase, settings, cur = settings.displayCurrency) {
   const sym = SYMBOLS[cur] || `${cur} `;
   return sym + formatNumber(convert(amountBase, cur, settings), cur);

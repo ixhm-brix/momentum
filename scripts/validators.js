@@ -1,18 +1,18 @@
-// validators.js — all the form's regex rules in one place.
-// Each check returns null if valid, or an error message if not.
+// validators.js — all the form's rules for checking what you type.
+// Each check gives back nothing if it's fine, or a message if something's wrong.
 
 export const RULES = {
-  // No leading or trailing whitespace (single non-space char is also valid).
+  // No spaces at the start or end (a single character is fine too).
   noEdgeSpaces: /^\S(?:.*\S)?$/,
-  // Two or more consecutive whitespace characters → reject.
+  // Reject two or more spaces in a row.
   doubleSpaces: /\s{2,}/,
-  // Money: no leading zeros, optional 1–2 decimal places.
+  // Money: no zero in front, and up to 2 decimals.
   amount: /^(0|[1-9]\d*)(\.\d{1,2})?$/,
-  // Strict YYYY-MM-DD calendar shape.
+  // Must look exactly like YYYY-MM-DD.
   date: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-  // Letters with single spaces or hyphens between words.
+  // Letters only, with single spaces or hyphens between words.
   category: /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/,
-  // Advanced: back-reference catches an accidentally repeated word ("the the").
+  // Catches the same word typed twice by mistake, like "the the".
   repeatedWord: /\b(\w+)\s+\1\b/i,
 };
 
@@ -55,7 +55,7 @@ export function validateCategory(value) {
   return null;
 }
 
-// Check the whole form. Returns errors per field; empty means all good.
+// Check the whole form. Lists any problems per field; empty means all good.
 export function validateTransaction({ description, amount, category, date }) {
   const errors = {};
   const d = validateDescription(description);

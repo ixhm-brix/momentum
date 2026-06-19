@@ -1,4 +1,4 @@
-// storage.js — save/load in the browser, and check imported files.
+// storage.js  saving and loading in the browser, and checking imported files.
 
 import { RULES } from './validators.js';
 
@@ -7,13 +7,13 @@ const SETTINGS_KEY = 'finance:settings';
 
 export const DEFAULT_SETTINGS = {
   cap: 400000,                     // stored in the base currency (RWF)
-  baseCurrency: 'RWF',             // amounts are ALWAYS stored in this
+  baseCurrency: 'RWF',             // every amount is always kept in this
   displayCurrency: 'RWF',          // what amounts are shown in (RWF | USD | EUR)
   rates: { USD: 1300, EUR: 1450 }, // how many RWF 1 unit of each is worth
   categories: ['Food', 'Books', 'Transport', 'Entertainment', 'Fees', 'Other'],
 };
 
-// Return saved records, or null on the first ever visit.
+// Give back saved entries, or nothing on the very first visit.
 export function loadData() {
   try {
     const raw = localStorage.getItem(DATA_KEY);
@@ -48,7 +48,7 @@ export function saveSettings(settings) {
 
 const REQUIRED_FIELDS = ['id', 'description', 'amount', 'category', 'date', 'createdAt', 'updatedAt'];
 
-// Check an imported JSON file. Returns {ok:true, records} or {ok:false, error}.
+// Check an imported file. Gives back {ok:true, records} if good, or {ok:false, error} if not.
 export function validateImport(text) {
   let parsed;
   try {

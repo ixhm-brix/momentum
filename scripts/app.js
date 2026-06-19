@@ -1,4 +1,4 @@
-// app.js — startup, routing, and event wiring.
+// app.js startup, page switching, and hooking up the buttons.
 
 import * as state from './state.js';
 import * as ui from './ui.js';
@@ -103,7 +103,7 @@ function startEdit(id) {
   $('#cancel-edit').hidden = false;
   ui.clearFieldErrors(FORM_FIELDS);
   location.hash = '#add';
-  // hashchange is async, so show the panel now so focus works.
+  // the URL change happens a moment later, so show the panel now so focus lands right.
   showRoute('add');
   $('#f-description').focus();
 }
@@ -179,8 +179,8 @@ function handleCurrencySubmit(event) {
   ui.announce('Exchange rates saved.');
 }
 
-// Switch which currency every amount is displayed in (conversion is display-only;
-// the stored records stay in RWF). Re-render the whole app immediately.
+// Switch which currency amounts are shown in (only the display changes,
+// the saved entries stay in RWF). Redraw the whole app right away.
 function handleDisplayCurrency(event) {
   state.updateSettings({ displayCurrency: event.target.value });
   renderAll();
@@ -300,7 +300,7 @@ function wireEvents() {
     location.hash = '#transactions';
   });
 
-  // Re-check a field as you type, once it has been flagged.
+  // Re-check a field as you type, once it's been marked wrong.
   FORM_FIELDS.forEach((f) => {
     $(`#f-${f}`).addEventListener('input', (e) => {
       if (e.target.getAttribute('aria-invalid') === 'true') {
